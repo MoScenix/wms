@@ -1,0 +1,20 @@
+FROM golang:1.25.5
+
+WORKDIR /usr/src/wms
+
+ENV GOPROXY=https://goproxy.cn,https://proxy.golang.org,direct
+ENV GOSUMDB=sum.golang.google.cn
+
+COPY app/wms/go.mod app/wms/go.sum ./app/wms/
+COPY rpc_gen ./rpc_gen
+COPY common ./common
+
+RUN cd app/wms && go mod download && go mod verify
+
+COPY app/wms ./app/wms
+
+RUN cd app/wms && go build -v -o server
+
+WORKDIR /usr/src/wms/app/wms
+EXPOSE 8888
+CMD ["./server"]

@@ -1,0 +1,146 @@
+services:
+  consul:
+    image: consul:1.15.4
+    ports:
+      - "8500:8500"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8500/v1/status/leader"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  mysql:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: gorm
+      MYSQL_DATABASE: gorm
+      MYSQL_USER: gorm
+      MYSQL_PASSWORD: gorm
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-pgorm"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./deploy/config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    ports:
+      - "9090:9090"
+    depends_on:
+      consul:
+        condition: service_healthy
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+    ports:
+      - "3000:3000"
+
+  # user:
+  #   build:
+  #     context: .
+  #     dockerfile: docker_files/DockerFile.user
+  #   ports:
+  #     - "8888:8888"
+  #   environment:
+  #     GO_ENV: online
+  #     MYSQL_USER: gorm
+  #     MYSQL_PASSWORD: gorm
+  #     MYSQL_DATABASE: gorm
+  #     MYSQL_HOST: mysql
+  #   volumes:
+  #     - deploy:/deploy
+  #     - static:/static
+  #   depends_on:
+  #     consul:
+  #       condition: service_healthy
+  #     mysql:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+
+  # wms:
+  #   build:
+  #     context: .
+  #     dockerfile: docker_files/DockerFile.wms
+  #   ports:
+  #     - "8889:8888"
+  #   environment:
+  #     GO_ENV: online
+  #   volumes:
+  #     - deploy:/deploy
+  #     - static:/static
+  #   depends_on:
+  #     consul:
+  #       condition: service_healthy
+  #     mysql:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+
+  # bff:
+  #   build:
+  #     context: .
+  #     dockerfile: docker_files/DockerFile.bff
+  #   ports:
+  #     - "8123:8080"
+  #   environment:
+  #     GO_ENV: online
+  #     SESSION_SECRET: please_change_session_secret
+  #   volumes:
+  #     - deploy:/deploy
+  #     - static:/static
+  #   depends_on:
+  #     consul:
+  #       condition: service_healthy
+  #     mysql:
+  #       condition: service_healthy
+  #     redis:
+  #       condition: service_healthy
+  #     user:
+  #       condition: service_started
+  #     wms:
+  #       condition: service_started
+
+  # frontend:
+  #   build:
+  #     context: .
+  #     dockerfile: docker_files/DockerFile.frontend
+  #     args:
+  #       VITE_API_BASE_URL: /api
+  #       VITE_DEPLOY_DOMAIN: http://localhost:8080
+  #   ports:
+  #     - "8080:80"
+  #   volumes:
+  #     - deploy:/deploy
+  #     - static:/static
+  #   depends_on:
+  #     bff:
+  #       condition: service_started
+
+volumes:
+  mysql_data: {}
+  deploy: {}
+  static: {}

@@ -1,0 +1,22 @@
+FROM node:20-alpine AS builder
+WORKDIR /work
+
+RUN npm config set registry https://registry.npmmirror.com
+RUN corepack enable
+
+COPY app/frontend/package.json app/frontend/pnpm-lock.yaml ./app/frontend/
+RUN cd app/frontend && pnpm install --frozen-lockfile
+
+COPY app/frontend ./app/frontend
+
+ARG VITE_API_BASE_URL=/api
+ARG VITE_DEPLOY_DOMAIN=http://localhost
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV VITE_DEPLOY_DOMAIN=$VITE_DEPLOY_DOMAIN
+
+RUN cd app/frontend && pnpm build
+
+FROM nginx:1.27-alpine
+COPY --from=builder /work/app/frontend/dist /usr/share/nginx/html
+COPY app/frontend/nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
