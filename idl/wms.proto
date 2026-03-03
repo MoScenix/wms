@@ -1,0 +1,390 @@
+syntax = "proto3";
+
+package wms;
+
+option go_package = "wms";
+
+enum BizType {
+  INBOUND = 0;
+  OUTBOUND = 1;
+  ADJUST = 2;
+}
+
+enum InboundStatus {
+  INBOUND_DRAFT = 0;
+  INBOUND_RECEIVED = 1;
+  INBOUND_CANCELED = 2;
+}
+
+enum OutboundStatus {
+  OUTBOUND_DRAFT = 0;
+  OUTBOUND_SHIPPED = 1;
+  OUTBOUND_CANCELED = 2;
+}
+
+enum InventoryCheckResult {
+  CHECK_OK = 0;
+  CHECK_INSUFFICIENT = 1;
+  CHECK_SKU_NOT_FOUND = 2;
+  CHECK_LOCATION_NOT_FOUND = 3;
+}
+
+message WarehouseInfo {
+  int64 id = 1;
+  string warehouseCode = 2;
+  string warehouseName = 3;
+  string address = 4;
+  int64 managerUserId = 5;
+  string createTime = 6;
+  string updateTime = 7;
+}
+
+message LocationInfo {
+  int64 id = 1;
+  int64 warehouseId = 2;
+  string locationCode = 3;
+  string locationName = 4;
+  string locationType = 5;
+  string createTime = 6;
+  string updateTime = 7;
+}
+
+message SkuInfo {
+  int64 id = 1;
+  string skuCode = 2;
+  string skuName = 3;
+  string unit = 4;
+  string category = 5;
+  string createTime = 6;
+  string updateTime = 7;
+}
+
+message InventoryInfo {
+  int64 id = 1;
+  int64 warehouseId = 2;
+  int64 locationId = 3;
+  int64 skuId = 4;
+  string lotNo = 5;
+  string expireDate = 6;
+  int64 quantity = 7;
+  int64 lockedQuantity = 8;
+  int64 availableQuantity = 9;
+  string createTime = 10;
+  string updateTime = 11;
+}
+
+message InboundOrderItemInfo {
+  int64 id = 1;
+  int64 inboundOrderId = 2;
+  int64 skuId = 3;
+  int64 locationId = 4;
+  string lotNo = 5;
+  string expireDate = 6;
+  int64 qty = 7;
+}
+
+message InboundOrderInfo {
+  int64 id = 1;
+  string inboundNo = 2;
+  int64 warehouseId = 3;
+  string supplierName = 4;
+  InboundStatus status = 5;
+  int64 operatorUserId = 6;
+  string remark = 7;
+  string createTime = 8;
+  string updateTime = 9;
+  repeated InboundOrderItemInfo items = 10;
+}
+
+message OutboundOrderItemInfo {
+  int64 id = 1;
+  int64 outboundOrderId = 2;
+  int64 skuId = 3;
+  int64 locationId = 4;
+  string lotNo = 5;
+  string expireDate = 6;
+  int64 qty = 7;
+}
+
+message OutboundOrderInfo {
+  int64 id = 1;
+  string outboundNo = 2;
+  int64 warehouseId = 3;
+  string customerName = 4;
+  OutboundStatus status = 5;
+  int64 operatorUserId = 6;
+  string remark = 7;
+  string createTime = 8;
+  string updateTime = 9;
+  repeated OutboundOrderItemInfo items = 10;
+}
+
+message InventoryTxnInfo {
+  int64 id = 1;
+  BizType bizType = 2;
+  string bizNo = 3;
+  int64 warehouseId = 4;
+  int64 locationId = 5;
+  int64 skuId = 6;
+  string lotNo = 7;
+  string expireDate = 8;
+  int64 qtyChange = 9;
+  int64 beforeQty = 10;
+  int64 afterQty = 11;
+  int64 operatorUserId = 12;
+  string createTime = 13;
+}
+
+message AddWarehouseReq {
+  string warehouseCode = 1;
+  string warehouseName = 2;
+  string address = 3;
+  int64 managerUserId = 4;
+}
+
+message AddWarehouseResp { int64 id = 1; }
+
+message UpdateWarehouseReq {
+  int64 id = 1;
+  string warehouseName = 2;
+  string address = 3;
+  int64 managerUserId = 4;
+}
+
+message UpdateWarehouseResp { bool success = 1; }
+message GetWarehouseReq { int64 id = 1; }
+message GetWarehouseResp { WarehouseInfo warehouse = 1; }
+
+message ListWarehouseReq {
+  int64 pageNum = 1;
+  int64 pageSize = 2;
+  string warehouseCode = 3;
+  string warehouseName = 4;
+}
+
+message ListWarehouseResp {
+  repeated WarehouseInfo records = 1;
+  int64 total = 2;
+}
+
+message AddLocationReq {
+  int64 warehouseId = 1;
+  string locationCode = 2;
+  string locationName = 3;
+  string locationType = 4;
+}
+
+message AddLocationResp { int64 id = 1; }
+
+message UpdateLocationReq {
+  int64 id = 1;
+  string locationName = 2;
+  string locationType = 3;
+}
+
+message UpdateLocationResp { bool success = 1; }
+message GetLocationReq { int64 id = 1; }
+message GetLocationResp { LocationInfo location = 1; }
+
+message ListLocationReq {
+  int64 pageNum = 1;
+  int64 pageSize = 2;
+  int64 warehouseId = 3;
+  string locationCode = 4;
+  string locationName = 5;
+}
+
+message ListLocationResp {
+  repeated LocationInfo records = 1;
+  int64 total = 2;
+}
+
+message AddSkuReq {
+  string skuCode = 1;
+  string skuName = 2;
+  string unit = 3;
+  string category = 4;
+}
+
+message AddSkuResp { int64 id = 1; }
+
+message UpdateSkuReq {
+  int64 id = 1;
+  string skuName = 2;
+  string unit = 3;
+  string category = 4;
+}
+
+message UpdateSkuResp { bool success = 1; }
+message GetSkuReq { int64 id = 1; }
+message GetSkuResp { SkuInfo sku = 1; }
+
+message ListSkuReq {
+  int64 pageNum = 1;
+  int64 pageSize = 2;
+  string skuCode = 3;
+  string skuName = 4;
+}
+
+message ListSkuResp {
+  repeated SkuInfo records = 1;
+  int64 total = 2;
+}
+
+message GetInventoryReq { int64 id = 1; }
+message GetInventoryResp { InventoryInfo inventory = 1; }
+
+message ListInventoryReq {
+  int64 pageNum = 1;
+  int64 pageSize = 2;
+  int64 warehouseId = 3;
+  int64 locationId = 4;
+  int64 skuId = 5;
+  string lotNo = 6;
+  string expireDate = 7;
+}
+
+message ListInventoryResp {
+  repeated InventoryInfo records = 1;
+  int64 total = 2;
+}
+
+message CheckInventoryItem {
+  int64 warehouseId = 1;
+  int64 locationId = 2;
+  int64 skuId = 3;
+  string lotNo = 4;
+  string expireDate = 5;
+  int64 requiredQty = 6;
+}
+
+message CheckInventoryReq { repeated CheckInventoryItem items = 1; }
+
+message CheckInventoryResultItem {
+  CheckInventoryItem requested = 1;
+  InventoryCheckResult result = 2;
+  int64 availableQty = 3;
+}
+
+message CheckInventoryResp {
+  repeated CheckInventoryResultItem results = 1;
+  bool allPass = 2;
+}
+
+message InboundOrderItemInput {
+  int64 skuId = 1;
+  int64 locationId = 2;
+  string lotNo = 3;
+  string expireDate = 4;
+  int64 qty = 5;
+}
+
+message CreateInboundOrderReq {
+  int64 warehouseId = 1;
+  string supplierName = 2;
+  string remark = 3;
+  int64 operatorUserId = 4;
+  repeated InboundOrderItemInput items = 5;
+}
+
+message CreateInboundOrderResp { int64 id = 1; }
+message ReceiveInboundOrderReq { int64 id = 1; int64 operatorUserId = 2; }
+message ReceiveInboundOrderResp { bool success = 1; }
+message GetInboundOrderReq { int64 id = 1; }
+message GetInboundOrderResp { InboundOrderInfo order = 1; }
+
+message ListInboundOrderReq {
+  int64 pageNum = 1;
+  int64 pageSize = 2;
+  string inboundNo = 3;
+  int64 warehouseId = 4;
+  InboundStatus status = 5;
+}
+
+message ListInboundOrderResp {
+  repeated InboundOrderInfo records = 1;
+  int64 total = 2;
+}
+
+message OutboundOrderItemInput {
+  int64 skuId = 1;
+  int64 locationId = 2;
+  string lotNo = 3;
+  string expireDate = 4;
+  int64 qty = 5;
+}
+
+message CreateOutboundOrderReq {
+  int64 warehouseId = 1;
+  string customerName = 2;
+  string remark = 3;
+  int64 operatorUserId = 4;
+  repeated OutboundOrderItemInput items = 5;
+}
+
+message CreateOutboundOrderResp { int64 id = 1; }
+message ShipOutboundOrderReq { int64 id = 1; int64 operatorUserId = 2; }
+message ShipOutboundOrderResp { bool success = 1; }
+message GetOutboundOrderReq { int64 id = 1; }
+message GetOutboundOrderResp { OutboundOrderInfo order = 1; }
+
+message ListOutboundOrderReq {
+  int64 pageNum = 1;
+  int64 pageSize = 2;
+  string outboundNo = 3;
+  int64 warehouseId = 4;
+  OutboundStatus status = 5;
+}
+
+message ListOutboundOrderResp {
+  repeated OutboundOrderInfo records = 1;
+  int64 total = 2;
+}
+
+message ListInventoryTxnReq {
+  int64 pageNum = 1;
+  int64 pageSize = 2;
+  BizType bizType = 3;
+  string bizNo = 4;
+  int64 warehouseId = 5;
+  int64 locationId = 6;
+  int64 skuId = 7;
+}
+
+message ListInventoryTxnResp {
+  repeated InventoryTxnInfo records = 1;
+  int64 total = 2;
+}
+
+service WmsService {
+  rpc AddWarehouse(AddWarehouseReq) returns (AddWarehouseResp);
+  rpc UpdateWarehouse(UpdateWarehouseReq) returns (UpdateWarehouseResp);
+  rpc GetWarehouse(GetWarehouseReq) returns (GetWarehouseResp);
+  rpc ListWarehouse(ListWarehouseReq) returns (ListWarehouseResp);
+
+  rpc AddLocation(AddLocationReq) returns (AddLocationResp);
+  rpc UpdateLocation(UpdateLocationReq) returns (UpdateLocationResp);
+  rpc GetLocation(GetLocationReq) returns (GetLocationResp);
+  rpc ListLocation(ListLocationReq) returns (ListLocationResp);
+
+  rpc AddSku(AddSkuReq) returns (AddSkuResp);
+  rpc UpdateSku(UpdateSkuReq) returns (UpdateSkuResp);
+  rpc GetSku(GetSkuReq) returns (GetSkuResp);
+  rpc ListSku(ListSkuReq) returns (ListSkuResp);
+
+  rpc GetInventory(GetInventoryReq) returns (GetInventoryResp);
+  rpc ListInventory(ListInventoryReq) returns (ListInventoryResp);
+  rpc CheckInventory(CheckInventoryReq) returns (CheckInventoryResp);
+
+  rpc CreateInboundOrder(CreateInboundOrderReq) returns (CreateInboundOrderResp);
+  rpc ReceiveInboundOrder(ReceiveInboundOrderReq) returns (ReceiveInboundOrderResp);
+  rpc GetInboundOrder(GetInboundOrderReq) returns (GetInboundOrderResp);
+  rpc ListInboundOrder(ListInboundOrderReq) returns (ListInboundOrderResp);
+
+  rpc CreateOutboundOrder(CreateOutboundOrderReq) returns (CreateOutboundOrderResp);
+  rpc ShipOutboundOrder(ShipOutboundOrderReq) returns (ShipOutboundOrderResp);
+  rpc GetOutboundOrder(GetOutboundOrderReq) returns (GetOutboundOrderResp);
+  rpc ListOutboundOrder(ListOutboundOrderReq) returns (ListOutboundOrderResp);
+
+  rpc ListInventoryTxn(ListInventoryTxnReq) returns (ListInventoryTxnResp);
+}

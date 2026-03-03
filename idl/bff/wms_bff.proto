@@ -1,0 +1,521 @@
+syntax = "proto3";
+
+package bff.wms;
+
+option go_package = "bff/wms";
+
+import "api.proto";
+import "bff/common.proto";
+
+service WmsService {
+  rpc AddWarehouse(WarehouseAddRequest) returns (BaseResponseLong) {
+    option (api.post) = "/wms/warehouse/add";
+  }
+  rpc UpdateWarehouse(WarehouseUpdateRequest) returns (BaseResponseBoolean) {
+    option (api.post) = "/wms/warehouse/update";
+  }
+  rpc GetWarehouseById(GetByIdRequest) returns (BaseResponseWarehouse) {
+    option (api.get) = "/wms/warehouse/get";
+  }
+  rpc ListWarehouseByPage(WarehouseQueryRequest) returns (BaseResponsePageWarehouse) {
+    option (api.post) = "/wms/warehouse/list/page";
+  }
+
+  rpc AddLocation(LocationAddRequest) returns (BaseResponseLong) {
+    option (api.post) = "/wms/location/add";
+  }
+  rpc UpdateLocation(LocationUpdateRequest) returns (BaseResponseBoolean) {
+    option (api.post) = "/wms/location/update";
+  }
+  rpc GetLocationById(GetByIdRequest) returns (BaseResponseLocation) {
+    option (api.get) = "/wms/location/get";
+  }
+  rpc ListLocationByPage(LocationQueryRequest) returns (BaseResponsePageLocation) {
+    option (api.post) = "/wms/location/list/page";
+  }
+
+  rpc AddSku(SkuAddRequest) returns (BaseResponseLong) {
+    option (api.post) = "/wms/sku/add";
+  }
+  rpc UpdateSku(SkuUpdateRequest) returns (BaseResponseBoolean) {
+    option (api.post) = "/wms/sku/update";
+  }
+  rpc GetSkuById(GetByIdRequest) returns (BaseResponseSku) {
+    option (api.get) = "/wms/sku/get";
+  }
+  rpc ListSkuByPage(SkuQueryRequest) returns (BaseResponsePageSku) {
+    option (api.post) = "/wms/sku/list/page";
+  }
+
+  rpc GetInventoryById(GetByIdRequest) returns (BaseResponseInventory) {
+    option (api.get) = "/wms/inventory/get";
+  }
+  rpc ListInventoryByPage(InventoryQueryRequest) returns (BaseResponsePageInventory) {
+    option (api.post) = "/wms/inventory/list/page";
+  }
+  rpc CheckInventory(CheckInventoryRequest) returns (BaseResponseCheckInventory) {
+    option (api.post) = "/wms/inventory/check";
+  }
+
+  rpc CreateInboundOrder(InboundCreateRequest) returns (BaseResponseLong) {
+    option (api.post) = "/wms/inbound/create";
+  }
+  rpc ReceiveInboundOrder(OrderOperateRequest) returns (BaseResponseBoolean) {
+    option (api.post) = "/wms/inbound/receive";
+  }
+  rpc GetInboundOrderById(GetByIdRequest) returns (BaseResponseInboundOrder) {
+    option (api.get) = "/wms/inbound/get";
+  }
+  rpc ListInboundOrderByPage(InboundOrderQueryRequest) returns (BaseResponsePageInboundOrder) {
+    option (api.post) = "/wms/inbound/list/page";
+  }
+
+  rpc CreateOutboundOrder(OutboundCreateRequest) returns (BaseResponseLong) {
+    option (api.post) = "/wms/outbound/create";
+  }
+  rpc ShipOutboundOrder(OrderOperateRequest) returns (BaseResponseBoolean) {
+    option (api.post) = "/wms/outbound/ship";
+  }
+  rpc GetOutboundOrderById(GetByIdRequest) returns (BaseResponseOutboundOrder) {
+    option (api.get) = "/wms/outbound/get";
+  }
+  rpc ListOutboundOrderByPage(OutboundOrderQueryRequest) returns (BaseResponsePageOutboundOrder) {
+    option (api.post) = "/wms/outbound/list/page";
+  }
+
+  rpc ListInventoryTxnByPage(InventoryTxnQueryRequest) returns (BaseResponsePageInventoryTxn) {
+    option (api.post) = "/wms/txn/list/page";
+  }
+}
+
+message BaseResponseBoolean {
+  int32 code = 1;
+  bool data = 2;
+  string message = 3;
+}
+
+message BaseResponseLong {
+  int32 code = 1;
+  int64 data = 2;
+  string message = 3;
+}
+
+message BaseResponseString {
+  int32 code = 1;
+  string data = 2;
+  string message = 3;
+}
+
+message GetByIdRequest {
+  int64 id = 1 [(api.query) = "id"];
+}
+
+message Warehouse {
+  int64 id = 1;
+  string warehouseCode = 2;
+  string warehouseName = 3;
+  string address = 4;
+  int64 managerUserId = 5;
+  string createTime = 6;
+  string updateTime = 7;
+}
+
+message BaseResponseWarehouse {
+  int32 code = 1;
+  Warehouse data = 2;
+  string message = 3;
+}
+
+message WarehouseAddRequest {
+  string warehouseCode = 1;
+  string warehouseName = 2;
+  string address = 3;
+  int64 managerUserId = 4;
+}
+
+message WarehouseUpdateRequest {
+  int64 id = 1;
+  string warehouseName = 2;
+  string address = 3;
+  int64 managerUserId = 4;
+}
+
+message WarehouseQueryRequest {
+  int64 pageNum = 1;
+  int64 pageSize = 2;
+  string warehouseCode = 3;
+  string warehouseName = 4;
+}
+
+message PageWarehouse {
+  repeated Warehouse records = 1;
+  int64 pageNumber = 2;
+  int64 pageSize = 3;
+  int64 totalPage = 4;
+  int64 totalRow = 5;
+  bool optimizeCountQuery = 6;
+}
+
+message BaseResponsePageWarehouse {
+  int32 code = 1;
+  PageWarehouse data = 2;
+  string message = 3;
+}
+
+message Location {
+  int64 id = 1;
+  int64 warehouseId = 2;
+  string locationCode = 3;
+  string locationName = 4;
+  string locationType = 5;
+  string createTime = 6;
+  string updateTime = 7;
+}
+
+message BaseResponseLocation {
+  int32 code = 1;
+  Location data = 2;
+  string message = 3;
+}
+
+message LocationAddRequest {
+  int64 warehouseId = 1;
+  string locationCode = 2;
+  string locationName = 3;
+  string locationType = 4;
+}
+
+message LocationUpdateRequest {
+  int64 id = 1;
+  string locationName = 2;
+  string locationType = 3;
+}
+
+message LocationQueryRequest {
+  int64 pageNum = 1;
+  int64 pageSize = 2;
+  int64 warehouseId = 3;
+  string locationCode = 4;
+  string locationName = 5;
+}
+
+message PageLocation {
+  repeated Location records = 1;
+  int64 pageNumber = 2;
+  int64 pageSize = 3;
+  int64 totalPage = 4;
+  int64 totalRow = 5;
+  bool optimizeCountQuery = 6;
+}
+
+message BaseResponsePageLocation {
+  int32 code = 1;
+  PageLocation data = 2;
+  string message = 3;
+}
+
+message Sku {
+  int64 id = 1;
+  string skuCode = 2;
+  string skuName = 3;
+  string unit = 4;
+  string category = 5;
+  string createTime = 6;
+  string updateTime = 7;
+}
+
+message BaseResponseSku {
+  int32 code = 1;
+  Sku data = 2;
+  string message = 3;
+}
+
+message SkuAddRequest {
+  string skuCode = 1;
+  string skuName = 2;
+  string unit = 3;
+  string category = 4;
+}
+
+message SkuUpdateRequest {
+  int64 id = 1;
+  string skuName = 2;
+  string unit = 3;
+  string category = 4;
+}
+
+message SkuQueryRequest {
+  int64 pageNum = 1;
+  int64 pageSize = 2;
+  string skuCode = 3;
+  string skuName = 4;
+}
+
+message PageSku {
+  repeated Sku records = 1;
+  int64 pageNumber = 2;
+  int64 pageSize = 3;
+  int64 totalPage = 4;
+  int64 totalRow = 5;
+  bool optimizeCountQuery = 6;
+}
+
+message BaseResponsePageSku {
+  int32 code = 1;
+  PageSku data = 2;
+  string message = 3;
+}
+
+message Inventory {
+  int64 id = 1;
+  int64 warehouseId = 2;
+  int64 locationId = 3;
+  int64 skuId = 4;
+  string lotNo = 5;
+  string expireDate = 6;
+  int64 quantity = 7;
+  int64 lockedQuantity = 8;
+  int64 availableQuantity = 9;
+  string createTime = 10;
+  string updateTime = 11;
+}
+
+message BaseResponseInventory {
+  int32 code = 1;
+  Inventory data = 2;
+  string message = 3;
+}
+
+message InventoryQueryRequest {
+  int64 pageNum = 1;
+  int64 pageSize = 2;
+  int64 warehouseId = 3;
+  int64 locationId = 4;
+  int64 skuId = 5;
+  string lotNo = 6;
+  string expireDate = 7;
+}
+
+message PageInventory {
+  repeated Inventory records = 1;
+  int64 pageNumber = 2;
+  int64 pageSize = 3;
+  int64 totalPage = 4;
+  int64 totalRow = 5;
+  bool optimizeCountQuery = 6;
+}
+
+message BaseResponsePageInventory {
+  int32 code = 1;
+  PageInventory data = 2;
+  string message = 3;
+}
+
+message CheckInventoryItem {
+  int64 warehouseId = 1;
+  int64 locationId = 2;
+  int64 skuId = 3;
+  string lotNo = 4;
+  string expireDate = 5;
+  int64 requiredQty = 6;
+}
+
+message CheckInventoryResultItem {
+  CheckInventoryItem requested = 1;
+  int32 result = 2;
+  int64 availableQty = 3;
+}
+
+message CheckInventoryRequest {
+  repeated CheckInventoryItem items = 1;
+}
+
+message CheckInventoryResponse {
+  repeated CheckInventoryResultItem results = 1;
+  bool allPass = 2;
+}
+
+message BaseResponseCheckInventory {
+  int32 code = 1;
+  CheckInventoryResponse data = 2;
+  string message = 3;
+}
+
+message OrderOperateRequest {
+  int64 id = 1;
+}
+
+message InboundOrderItem {
+  int64 id = 1;
+  int64 inboundOrderId = 2;
+  int64 skuId = 3;
+  int64 locationId = 4;
+  string lotNo = 5;
+  string expireDate = 6;
+  int64 qty = 7;
+}
+
+message InboundOrder {
+  int64 id = 1;
+  string inboundNo = 2;
+  int64 warehouseId = 3;
+  string supplierName = 4;
+  int32 status = 5;
+  int64 operatorUserId = 6;
+  string remark = 7;
+  string createTime = 8;
+  string updateTime = 9;
+  repeated InboundOrderItem items = 10;
+}
+
+message InboundOrderItemInput {
+  int64 skuId = 1;
+  int64 locationId = 2;
+  string lotNo = 3;
+  string expireDate = 4;
+  int64 qty = 5;
+}
+
+message InboundCreateRequest {
+  int64 warehouseId = 1;
+  string supplierName = 2;
+  string remark = 3;
+  repeated InboundOrderItemInput items = 4;
+}
+
+message InboundOrderQueryRequest {
+  int64 pageNum = 1;
+  int64 pageSize = 2;
+  string inboundNo = 3;
+  int64 warehouseId = 4;
+  int32 status = 5;
+}
+
+message PageInboundOrder {
+  repeated InboundOrder records = 1;
+  int64 pageNumber = 2;
+  int64 pageSize = 3;
+  int64 totalPage = 4;
+  int64 totalRow = 5;
+  bool optimizeCountQuery = 6;
+}
+
+message BaseResponseInboundOrder {
+  int32 code = 1;
+  InboundOrder data = 2;
+  string message = 3;
+}
+
+message BaseResponsePageInboundOrder {
+  int32 code = 1;
+  PageInboundOrder data = 2;
+  string message = 3;
+}
+
+message OutboundOrderItem {
+  int64 id = 1;
+  int64 outboundOrderId = 2;
+  int64 skuId = 3;
+  int64 locationId = 4;
+  string lotNo = 5;
+  string expireDate = 6;
+  int64 qty = 7;
+}
+
+message OutboundOrder {
+  int64 id = 1;
+  string outboundNo = 2;
+  int64 warehouseId = 3;
+  string customerName = 4;
+  int32 status = 5;
+  int64 operatorUserId = 6;
+  string remark = 7;
+  string createTime = 8;
+  string updateTime = 9;
+  repeated OutboundOrderItem items = 10;
+}
+
+message OutboundOrderItemInput {
+  int64 skuId = 1;
+  int64 locationId = 2;
+  string lotNo = 3;
+  string expireDate = 4;
+  int64 qty = 5;
+}
+
+message OutboundCreateRequest {
+  int64 warehouseId = 1;
+  string customerName = 2;
+  string remark = 3;
+  repeated OutboundOrderItemInput items = 4;
+}
+
+message OutboundOrderQueryRequest {
+  int64 pageNum = 1;
+  int64 pageSize = 2;
+  string outboundNo = 3;
+  int64 warehouseId = 4;
+  int32 status = 5;
+}
+
+message PageOutboundOrder {
+  repeated OutboundOrder records = 1;
+  int64 pageNumber = 2;
+  int64 pageSize = 3;
+  int64 totalPage = 4;
+  int64 totalRow = 5;
+  bool optimizeCountQuery = 6;
+}
+
+message BaseResponseOutboundOrder {
+  int32 code = 1;
+  OutboundOrder data = 2;
+  string message = 3;
+}
+
+message BaseResponsePageOutboundOrder {
+  int32 code = 1;
+  PageOutboundOrder data = 2;
+  string message = 3;
+}
+
+message InventoryTxn {
+  int64 id = 1;
+  int32 bizType = 2;
+  string bizNo = 3;
+  int64 warehouseId = 4;
+  int64 locationId = 5;
+  int64 skuId = 6;
+  string lotNo = 7;
+  string expireDate = 8;
+  int64 qtyChange = 9;
+  int64 beforeQty = 10;
+  int64 afterQty = 11;
+  int64 operatorUserId = 12;
+  string createTime = 13;
+}
+
+message InventoryTxnQueryRequest {
+  int64 pageNum = 1;
+  int64 pageSize = 2;
+  int32 bizType = 3;
+  string bizNo = 4;
+  int64 warehouseId = 5;
+  int64 locationId = 6;
+  int64 skuId = 7;
+}
+
+message PageInventoryTxn {
+  repeated InventoryTxn records = 1;
+  int64 pageNumber = 2;
+  int64 pageSize = 3;
+  int64 totalPage = 4;
+  int64 totalRow = 5;
+  bool optimizeCountQuery = 6;
+}
+
+message BaseResponsePageInventoryTxn {
+  int32 code = 1;
+  PageInventoryTxn data = 2;
+  string message = 3;
+}
