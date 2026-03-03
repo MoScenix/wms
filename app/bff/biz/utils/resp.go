@@ -2,7 +2,6 @@ package utils
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/cloudwego/hertz/pkg/app"
 )
@@ -16,6 +15,5 @@ func SendErrResponse(ctx context.Context, c *app.RequestContext, code int, err e
 // SendSuccessResponse  pack success response
 func SendSuccessResponse(ctx context.Context, c *app.RequestContext, code int, data interface{}) {
 	// todo edit custom code
-	fmt.Println(data)
 	c.JSON(code, data)
 }

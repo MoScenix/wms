@@ -58,87 +58,87 @@ services:
     ports:
       - "3000:3000"
 
-  # user:
-  #   build:
-  #     context: .
-  #     dockerfile: docker_files/DockerFile.user
-  #   ports:
-  #     - "8888:8888"
-  #   environment:
-  #     GO_ENV: online
-  #     MYSQL_USER: gorm
-  #     MYSQL_PASSWORD: gorm
-  #     MYSQL_DATABASE: gorm
-  #     MYSQL_HOST: mysql
-  #   volumes:
-  #     - deploy:/deploy
-  #     - static:/static
-  #   depends_on:
-  #     consul:
-  #       condition: service_healthy
-  #     mysql:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_healthy
+  user:
+    build:
+      context: .
+      dockerfile: docker_files/DockerFile.user
+    ports:
+      - "8888:8888"
+    environment:
+      GO_ENV: online
+      MYSQL_USER: gorm
+      MYSQL_PASSWORD: gorm
+      MYSQL_DATABASE: gorm
+      MYSQL_HOST: mysql
+    volumes:
+      - deploy:/deploy
+      - static:/static
+    depends_on:
+      consul:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
-  # wms:
-  #   build:
-  #     context: .
-  #     dockerfile: docker_files/DockerFile.wms
-  #   ports:
-  #     - "8889:8888"
-  #   environment:
-  #     GO_ENV: online
-  #   volumes:
-  #     - deploy:/deploy
-  #     - static:/static
-  #   depends_on:
-  #     consul:
-  #       condition: service_healthy
-  #     mysql:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_healthy
+  wms:
+    build:
+      context: .
+      dockerfile: docker_files/DockerFile.wms
+    ports:
+      - "8889:8888"
+    environment:
+      GO_ENV: online
+    volumes:
+      - deploy:/deploy
+      - static:/static
+    depends_on:
+      consul:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
-  # bff:
-  #   build:
-  #     context: .
-  #     dockerfile: docker_files/DockerFile.bff
-  #   ports:
-  #     - "8123:8080"
-  #   environment:
-  #     GO_ENV: online
-  #     SESSION_SECRET: please_change_session_secret
-  #   volumes:
-  #     - deploy:/deploy
-  #     - static:/static
-  #   depends_on:
-  #     consul:
-  #       condition: service_healthy
-  #     mysql:
-  #       condition: service_healthy
-  #     redis:
-  #       condition: service_healthy
-  #     user:
-  #       condition: service_started
-  #     wms:
-  #       condition: service_started
+  bff:
+    build:
+      context: .
+      dockerfile: docker_files/DockerFile.bff
+    ports:
+      - "8123:8080"
+    environment:
+      GO_ENV: online
+      SESSION_SECRET: please_change_session_secret
+    volumes:
+      - deploy:/deploy
+      - static:/static
+    depends_on:
+      consul:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      user:
+        condition: service_started
+      wms:
+        condition: service_started
 
-  # frontend:
-  #   build:
-  #     context: .
-  #     dockerfile: docker_files/DockerFile.frontend
-  #     args:
-  #       VITE_API_BASE_URL: /api
-  #       VITE_DEPLOY_DOMAIN: http://localhost:8080
-  #   ports:
-  #     - "8080:80"
-  #   volumes:
-  #     - deploy:/deploy
-  #     - static:/static
-  #   depends_on:
-  #     bff:
-  #       condition: service_started
+  frontend:
+    build:
+      context: .
+      dockerfile: docker_files/DockerFile.frontend
+      args:
+        VITE_API_BASE_URL: /api
+        VITE_DEPLOY_DOMAIN: http://localhost:8080
+    ports:
+      - "8080:80"
+    volumes:
+      - deploy:/deploy
+      - static:/static
+    depends_on:
+      bff:
+        condition: service_started
 
 volumes:
   mysql_data: {}

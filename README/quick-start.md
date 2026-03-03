@@ -1,33 +1,52 @@
-# 快速开始
+# 快速开始（部署指南）
 
-## 1. 启动基础依赖
+本项目支持使用 **Docker Compose** 在本地一键启动，适合学习和调试分布式微服务架构。
 
-```bash
-docker compose up -d consul mysql redis
-```
+## 环境准备
 
-## 2. 启动后端服务
+在开始之前，请确保本地已安装以下工具：
 
-分别启动：
+- Git
+- Docker
+- Docker Compose（推荐 v2 及以上版本）
 
-- `app/user`
-- `app/wms`
-- `app/bff`
+## 启动步骤
 
-示例：
+首先配置**docker-compose.yml**文件的**MYSQL_ROOT_PASSWORD**等参数，并保存。
 
 ```bash
-cd app/user && go run .
-cd app/wms && go run .
-cd app/bff && go run .
+# 1. 克隆仓库
+git clone https://github.com/MoScenix/wms.git
+cd ai-code
+
+# 2. 启动所有服务
+docker compose up -d
+
+# 3. 查看服务状态
+
+docker compose ps
+
+# 4. 访问前端服务
+
+http://localhost:8080
+
+# 5. 关闭所有服务
+
+docker compose down
+
+# 6. 删除所有数据
+
+docker compose down --vo
+
 ```
 
-## 3. 启动前端
+## 修改密码
 
-```bash
-cd app/frontend
-pnpm install
-pnpm dev
-```
+在**docker-compose.yml**文件中,可以修改服务的**environment**参数，修改密码。
 
-默认本地访问：`http://localhost:5173`。
+
+#### 分布式参数
+
+对于**consul**作为注册中心的项目需要改**consul_address**参数，这样就可以部署在多个服务器上。
+
+在**docker-compose.yml**文件保存所需的**server**就行。
