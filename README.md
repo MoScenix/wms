@@ -1,35 +1,61 @@
-# WMS v1
+# WMS
 
-WMS v1 is implemented with the same stack and layering as `ai-code`:
+[![Go](https://img.shields.io/badge/go-1.25-blue.svg?style=flat-square)](https://go.dev/dl/)
 
-- `idl -> rpc_gen -> app/*`
-- Kitex (RPC)
-- Hertz (BFF)
-- Consul + MySQL + Redis
+> 基于 **Kitex** 和 **Hertz** 的分布式仓储管理系统（WMS）
 
-## Scope
+## 概览
 
-- Inbound orders
-- Outbound orders
-- Inventory (warehouse + location + lot + expiry)
-- Inventory transaction log
++ 基于 Docker，支持一键启动基础依赖
++ 前后端分离，BFF + RPC 微服务架构
++ 登录态 + 角色权限，覆盖仓库核心业务流程
 
-## USER Reuse
+## 快速开始
 
-- `idl/user.proto` is reused as-is.
-- BFF keeps `userservice.Client` and forwards identity via metainfo.
-- Session based auth is wired in `app/bff/middleware`.
+参考[快速开始](README/quick-start.md)
 
-## Layout
+## 可观测性&&运维
 
-- `idl/`: API contracts (`user.proto`, `wms.proto`, `bff/wms_bff.proto`)
-- `rpc_gen/`: generated Kitex clients/stubs
-- `app/wms/`: WMS RPC server
-- `app/bff/`: WMS BFF HTTP gateway
-- `common/`: shared observability and server suites
+参考[可观测&&运维](README/observability-and-maintenance.md)
 
-## Notes
+## 技术栈
 
-- `app/wms/biz/store` currently provides an in-memory transactional implementation for fast bootstrap and interface verification.
-- DAL bootstrap for MySQL/Redis is present and can be switched to persistent model implementations incrementally.
-# wms
+参考[技术栈](README/stack.md)
+
+## 页面截图
+
+### 首页
+
+（待补充）
+
+### 用户管理
+
+（待补充）
+
+### 仓库管理
+
+（待补充）
+
+### 库位管理
+
+（待补充）
+
+### SKU 管理
+
+（待补充）
+
+### 库存查询
+
+（待补充）
+
+### 入库管理
+
+（待补充）
+
+### 出库管理
+
+（待补充）
+
+### 库存流水
+
+（待补充）

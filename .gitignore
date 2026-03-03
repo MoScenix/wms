@@ -1,0 +1,21 @@
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+
+# Logs
+**/log/
+*.log
+
+# Frontend artifacts
+app/frontend/node_modules/
+app/frontend/dist/
+
+# Go build outputs
+bin/
+*.exe
+*.out
+
+# Env files
+.env
+.env.*
